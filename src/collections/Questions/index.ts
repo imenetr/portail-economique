@@ -20,5 +20,33 @@ export const Questions: CollectionConfig = {
       type: 'checkbox',
       defaultValue: false,
     },
+    {
+  name: 'answers',
+  label: 'Réponses',
+  type: 'array',
+  required: true,
+  minRows: 1,
+
+  fields: [
+    {
+      name: 'text',
+      label: 'Texte de la réponse',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'nextQuestion',
+      label: 'Question suivante',
+      type: 'relationship',
+      relationTo: 'questions',
+    },
+    {
+      name: 'result',
+      label: 'Résultat final',
+      type: 'relationship',
+      relationTo: 'results',
+    },
+  ],
+},
   ],
 }

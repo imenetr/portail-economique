@@ -67,6 +67,7 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    results: Result;
     questions: Question;
     pages: Page;
     posts: Post;
@@ -90,6 +91,7 @@ export interface Config {
     };
   };
   collectionsSelect: {
+    results: ResultsSelect<false> | ResultsSelect<true>;
     questions: QuestionsSelect<false> | QuestionsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
@@ -155,12 +157,29 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "results".
+ */
+export interface Result {
+  id: string;
+  title: string;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "questions".
  */
 export interface Question {
   id: string;
   title: string;
   isStartQuestion?: boolean | null;
+  answers: {
+    text: string;
+    nextQuestion?: (string | null) | Question;
+    result?: (string | null) | Result;
+    id?: string | null;
+  }[];
   updatedAt: string;
   createdAt: string;
 }
@@ -985,6 +1004,10 @@ export interface PayloadLockedDocument {
   id: string;
   document?:
     | ({
+        relationTo: 'results';
+        value: string | Result;
+      } | null)
+    | ({
         relationTo: 'questions';
         value: string | Question;
       } | null)
@@ -1072,11 +1095,29 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "results_select".
+ */
+export interface ResultsSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "questions_select".
  */
 export interface QuestionsSelect<T extends boolean = true> {
   title?: T;
   isStartQuestion?: T;
+  answers?:
+    | T
+    | {
+        text?: T;
+        nextQuestion?: T;
+        result?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
