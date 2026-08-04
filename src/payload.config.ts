@@ -5,18 +5,19 @@ import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
 import { defaultLexical } from '@/fields/defaultLexical'
-import { Questions } from './collections/Questions'
-import {Results} from './collections/Results'
+
 import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
+import { Questions } from './collections/Questions'
+import { Recommendations } from './collections/Recommendations'
+import { Results } from './collections/Results'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { getServerSideURL } from './utilities/getURL'
-import { Recommendations } from './collections/Recommendations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)

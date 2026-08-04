@@ -1,5 +1,6 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+
 import { QuestionnaireClient } from './QuestionnaireClient'
 
 export default async function QuestionnairePage() {

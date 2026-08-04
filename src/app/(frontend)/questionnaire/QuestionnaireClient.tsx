@@ -1,7 +1,8 @@
 'use client'
 
-import type { Question, Result as ResultType } from '@/payload-types'
 import { useState } from 'react'
+
+import type { Question, Result as ResultType } from '@/payload-types'
 
 import styles from './questionnaire.module.css'
 import { Recap } from './Recap'
