@@ -3,6 +3,7 @@
 import type { Question, Result as ResultType } from '@/payload-types'
 import { useState } from 'react'
 
+import styles from './questionnaire.module.css'
 import { Recap } from './Recap'
 import { Result } from './Result'
 
@@ -79,48 +80,68 @@ export function QuestionnaireClient({
     setRecapItems([])
   }
 
-  if (currentResult) {
-    return (
-      <main>
-        <Result result={currentResult} />
-        <Recap items={recapItems} />
-
-        <button type="button" onClick={handleBack}>
-          Retour
-        </button>
-
-        <button type="button" onClick={handleReset}>
-          Recommencer
-        </button>
-      </main>
-    )
-  }
-
   return (
-    <main>
-      <h1>{currentQuestion.title}</h1>
+    <main className={styles.page}>
+      <div className={styles.container}>
+        <div className={styles.layout}>
+          <div className={styles.mainColumn}>
+            <div className={styles.gradientCard}>
+              <div className={styles.glassPanel}>
+                {currentResult ? (
+                  <Result result={currentResult} />
+                ) : (
+                  <>
+                    <h1 className={styles.question}>
+                      {currentQuestion.title}
+                    </h1>
 
-      <div>
-        {currentQuestion.answers?.map((answer) => (
-          <button
-            key={answer.id}
-            type="button"
-            onClick={() => handleAnswer(answer)}
-          >
-            {answer.text}
-          </button>
-        ))}
+                    <div className={styles.answers}>
+                      {currentQuestion.answers?.map((answer) => (
+                        <button
+                          className={styles.answerButton}
+                          key={answer.id}
+                          type="button"
+                          onClick={() => handleAnswer(answer)}
+                        >
+                          {answer.text}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                <div className={styles.navigation}>
+                  <button
+                    className={styles.backButton}
+                    type="button"
+                    onClick={handleBack}
+                    disabled={!currentResult && history.length === 0}
+                  >
+                    ← Retour
+                  </button>
+
+                  <button
+                    className={styles.resetButton}
+                    type="button"
+                    onClick={handleReset}
+                    disabled={!currentResult && history.length === 0}
+                  >
+                    Réinitialiser
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside className={styles.recapColumn}>
+            <div className={styles.gradientCard}>
+              <div className={styles.glassPanel}>
+                <Recap items={recapItems} />
+              </div>
+            </div>
+          </aside>
+        </div>
       </div>
-
-      {history.length > 0 && (
-        <button type="button" onClick={handleBack}>
-          Retour
-        </button>
-      )}
-
-      <button type="button" onClick={handleReset}>
-        Recommencer
-      </button>
     </main>
   )
 }
