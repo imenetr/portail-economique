@@ -168,6 +168,7 @@ export interface Answer {
   text: string;
   question: string | Question;
   nextQuestion?: (string | null) | Question;
+  recommendation?: (string | null) | Recommendation;
   updatedAt: string;
   createdAt: string;
 }
@@ -1155,6 +1156,7 @@ export interface AnswersSelect<T extends boolean = true> {
   text?: T;
   question?: T;
   nextQuestion?: T;
+  recommendation?: T;
   updatedAt?: T;
   createdAt?: T;
 }

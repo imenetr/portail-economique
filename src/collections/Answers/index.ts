@@ -25,5 +25,11 @@ export const Answers: CollectionConfig = {
   type: 'relationship',
   relationTo: 'questions',
 },
+{
+  name: 'recommendation',
+  label: 'Recommandation',
+  type: 'relationship',
+  relationTo: 'recommendations',
+},
   ],
 }
