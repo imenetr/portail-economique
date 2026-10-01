@@ -67,6 +67,7 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    answers: Answer;
     recommendations: Recommendation;
     results: Result;
     questions: Question;
@@ -92,6 +93,7 @@ export interface Config {
     };
   };
   collectionsSelect: {
+    answers: AnswersSelect<false> | AnswersSelect<true>;
     recommendations: RecommendationsSelect<false> | RecommendationsSelect<true>;
     results: ResultsSelect<false> | ResultsSelect<true>;
     questions: QuestionsSelect<false> | QuestionsSelect<true>;
@@ -156,6 +158,30 @@ export interface UserAuthOperations {
     email: string;
     password: string;
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "answers".
+ */
+export interface Answer {
+  id: string;
+  text: string;
+  question: string | Question;
+  nextQuestion?: (string | null) | Question;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "questions".
+ */
+export interface Question {
+  id: string;
+  title: string;
+  isStartQuestion?: boolean | null;
+  answers?: (string | Answer)[] | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -319,23 +345,6 @@ export interface Result {
         id?: string | null;
       }[]
     | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "questions".
- */
-export interface Question {
-  id: string;
-  title: string;
-  isStartQuestion?: boolean | null;
-  answers: {
-    text: string;
-    nextQuestion?: (string | null) | Question;
-    result?: (string | null) | Result;
-    id?: string | null;
-  }[];
   updatedAt: string;
   createdAt: string;
 }
@@ -1041,6 +1050,10 @@ export interface PayloadLockedDocument {
   id: string;
   document?:
     | ({
+        relationTo: 'answers';
+        value: string | Answer;
+      } | null)
+    | ({
         relationTo: 'recommendations';
         value: string | Recommendation;
       } | null)
@@ -1136,6 +1149,17 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "answers_select".
+ */
+export interface AnswersSelect<T extends boolean = true> {
+  text?: T;
+  question?: T;
+  nextQuestion?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "recommendations_select".
  */
 export interface RecommendationsSelect<T extends boolean = true> {
@@ -1187,14 +1211,7 @@ export interface ResultsSelect<T extends boolean = true> {
 export interface QuestionsSelect<T extends boolean = true> {
   title?: T;
   isStartQuestion?: T;
-  answers?:
-    | T
-    | {
-        text?: T;
-        nextQuestion?: T;
-        result?: T;
-        id?: T;
-      };
+  answers?: T;
   updatedAt?: T;
   createdAt?: T;
 }

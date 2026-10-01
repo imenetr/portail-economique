@@ -2,11 +2,9 @@ import type { CollectionConfig } from 'payload'
 
 export const Questions: CollectionConfig = {
   slug: 'questions',
-
   admin: {
     useAsTitle: 'title',
   },
-
   fields: [
     {
       name: 'title',
@@ -21,32 +19,11 @@ export const Questions: CollectionConfig = {
       defaultValue: false,
     },
     {
-  name: 'answers',
-  label: 'Réponses',
-  type: 'array',
-  required: true,
-  minRows: 1,
-
-  fields: [
-    {
-      name: 'text',
-      label: 'Texte de la réponse',
-      type: 'text',
-      required: true,
-    },
-    {
-      name: 'nextQuestion',
-      label: 'Question suivante',
+      name: 'answers',
+      label: 'Réponses',
       type: 'relationship',
-      relationTo: 'questions',
+      relationTo: 'answers',
+      hasMany: true,
     },
-    {
-      name: 'result',
-      label: 'Résultat final',
-      type: 'relationship',
-      relationTo: 'results',
-    },
-  ],
-},
   ],
 }
