@@ -399,7 +399,7 @@ export interface Page {
       | null;
     media?: (string | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock | QuestionnaireBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -862,6 +862,16 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "QuestionnaireBlock".
+ */
+export interface QuestionnaireBlock {
+  startingQuestion: string | Question;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'questionnaire';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1253,6 +1263,7 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        questionnaire?: T | QuestionnaireBlockSelect<T>;
       };
   meta?:
     | T
@@ -1349,6 +1360,15 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "QuestionnaireBlock_select".
+ */
+export interface QuestionnaireBlockSelect<T extends boolean = true> {
+  startingQuestion?: T;
   id?: T;
   blockName?: T;
 }
