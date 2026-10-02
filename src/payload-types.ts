@@ -69,7 +69,6 @@ export interface Config {
   collections: {
     answers: Answer;
     recommendations: Recommendation;
-    results: Result;
     questions: Question;
     pages: Page;
     posts: Post;
@@ -95,7 +94,6 @@ export interface Config {
   collectionsSelect: {
     answers: AnswersSelect<false> | AnswersSelect<true>;
     recommendations: RecommendationsSelect<false> | RecommendationsSelect<true>;
-    results: ResultsSelect<false> | ResultsSelect<true>;
     questions: QuestionsSelect<false> | QuestionsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
@@ -320,32 +318,6 @@ export interface FolderInterface {
     totalDocs?: number;
   };
   folderType?: 'media'[] | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "results".
- */
-export interface Result {
-  id: string;
-  title: string;
-  description?: string | null;
-  recommendations?: (string | Recommendation)[] | null;
-  pdfResource?: {
-    label?: string | null;
-    buttonText?: string | null;
-    file?: (string | null) | Media;
-  };
-  externalResourcesIntro?: string | null;
-  externalResources?:
-    | {
-        title: string;
-        description?: string | null;
-        url: string;
-        id?: string | null;
-      }[]
-    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1069,10 +1041,6 @@ export interface PayloadLockedDocument {
         value: string | Recommendation;
       } | null)
     | ({
-        relationTo: 'results';
-        value: string | Result;
-      } | null)
-    | ({
         relationTo: 'questions';
         value: string | Question;
       } | null)
@@ -1184,33 +1152,6 @@ export interface RecommendationsSelect<T extends boolean = true> {
         name?: T;
         website?: T;
         logo?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "results_select".
- */
-export interface ResultsSelect<T extends boolean = true> {
-  title?: T;
-  description?: T;
-  recommendations?: T;
-  pdfResource?:
-    | T
-    | {
-        label?: T;
-        buttonText?: T;
-        file?: T;
-      };
-  externalResourcesIntro?: T;
-  externalResources?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        url?: T;
         id?: T;
       };
   updatedAt?: T;

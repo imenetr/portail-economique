@@ -2,11 +2,10 @@
 
 import { useState } from 'react'
 
-import type { Question, Result as ResultType } from '@/payload-types'
+import type { Question, Recommendation } from '@/payload-types'
 
 import styles from './questionnaire.module.css'
 import { Recap } from './Recap'
-import { Result } from './Result'
 
 type QuestionnaireClientProps = {
   firstQuestion: Question
@@ -23,8 +22,8 @@ export function QuestionnaireClient({
   const [currentQuestion, setCurrentQuestion] =
     useState<Question>(firstQuestion)
 
-  const [currentResult, setCurrentResult] =
-    useState<ResultType | null>(null)
+  const [currentRecommendation, setCurrentRecommendation] =
+    useState<Recommendation | null>(null)
 
   const [history, setHistory] = useState<Question[]>([])
   const [recapItems, setRecapItems] = useState<RecapItem[]>([])
@@ -32,6 +31,8 @@ export function QuestionnaireClient({
   const handleAnswer = (
     answer: NonNullable<Question['answers']>[number],
   ) => {
+    if (typeof answer === 'string') return
+
     setRecapItems((previousItems) => [
       ...previousItems,
       {
@@ -40,8 +41,11 @@ export function QuestionnaireClient({
       },
     ])
 
-    if (answer.result && typeof answer.result === 'object') {
-      setCurrentResult(answer.result)
+    if (
+      answer.recommendation &&
+      typeof answer.recommendation === 'object'
+    ) {
+      setCurrentRecommendation(answer.recommendation)
       return
     }
 
@@ -59,8 +63,8 @@ export function QuestionnaireClient({
   }
 
   const handleBack = () => {
-    if (currentResult) {
-      setCurrentResult(null)
+    if (currentRecommendation) {
+      setCurrentRecommendation(null)
       setRecapItems((previousItems) => previousItems.slice(0, -1))
       return
     }
@@ -76,7 +80,7 @@ export function QuestionnaireClient({
 
   const handleReset = () => {
     setCurrentQuestion(firstQuestion)
-    setCurrentResult(null)
+    setCurrentRecommendation(null)
     setHistory([])
     setRecapItems([])
   }
@@ -88,8 +92,26 @@ export function QuestionnaireClient({
           <div className={styles.mainColumn}>
             <div className={styles.gradientCard}>
               <div className={styles.glassPanel}>
-                {currentResult ? (
-                  <Result result={currentResult} />
+                {currentRecommendation ? (
+                  <div>
+                    <h1 className={styles.question}>
+                      {currentRecommendation.title}
+                    </h1>
+
+                    {currentRecommendation.description && (
+                      <p>{currentRecommendation.description}</p>
+                    )}
+
+                    {currentRecommendation.website && (
+                      <a
+                        href={currentRecommendation.website}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Consulter le site
+                      </a>
+                    )}
+                  </div>
                 ) : (
                   <>
                     <h1 className={styles.question}>
@@ -97,16 +119,20 @@ export function QuestionnaireClient({
                     </h1>
 
                     <div className={styles.answers}>
-                      {currentQuestion.answers?.map((answer) => (
-                        <button
-                          className={styles.answerButton}
-                          key={answer.id}
-                          type="button"
-                          onClick={() => handleAnswer(answer)}
-                        >
-                          {answer.text}
-                        </button>
-                      ))}
+                      {currentQuestion.answers?.map((answer) => {
+  if (typeof answer === 'string') return null
+
+  return (
+    <button
+      className={styles.answerButton}
+      key={answer.id}
+      type="button"
+      onClick={() => handleAnswer(answer)}
+    >
+      {answer.text}
+    </button>
+  )
+})}
                     </div>
                   </>
                 )}
@@ -116,7 +142,9 @@ export function QuestionnaireClient({
                     className={styles.backButton}
                     type="button"
                     onClick={handleBack}
-                    disabled={!currentResult && history.length === 0}
+                    disabled={
+                      !currentRecommendation && history.length === 0
+                    }
                   >
                     ← Retour
                   </button>
@@ -125,7 +153,9 @@ export function QuestionnaireClient({
                     className={styles.resetButton}
                     type="button"
                     onClick={handleReset}
-                    disabled={!currentResult && history.length === 0}
+                    disabled={
+                      !currentRecommendation && history.length === 0
+                    }
                   >
                     Réinitialiser
                   </button>
