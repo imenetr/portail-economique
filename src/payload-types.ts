@@ -165,6 +165,7 @@ export interface Answer {
   id: string;
   text: string;
   question: string | Question;
+  destinationType: 'question' | 'recommendation';
   nextQuestion?: (string | null) | Question;
   recommendation?: (string | null) | Recommendation;
   updatedAt: string;
@@ -1133,6 +1134,7 @@ export interface PayloadMigration {
 export interface AnswersSelect<T extends boolean = true> {
   text?: T;
   question?: T;
+  destinationType?: T;
   nextQuestion?: T;
   recommendation?: T;
   updatedAt?: T;

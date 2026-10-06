@@ -120,19 +120,19 @@ export function QuestionnaireClient({
 
                     <div className={styles.answers}>
                       {currentQuestion.answers?.map((answer) => {
-  if (typeof answer === 'string') return null
+                        if (typeof answer === 'string') return null
 
-  return (
-    <button
-      className={styles.answerButton}
-      key={answer.id}
-      type="button"
-      onClick={() => handleAnswer(answer)}
-    >
-      {answer.text}
-    </button>
-  )
-})}
+                        return (
+                          <button
+                            className={styles.answerButton}
+                            key={answer.id}
+                            type="button"
+                            onClick={() => handleAnswer(answer)}
+                          >
+                            {answer.text}
+                          </button>
+                        )
+                      })}
                     </div>
                   </>
                 )}
@@ -164,13 +164,15 @@ export function QuestionnaireClient({
             </div>
           </div>
 
-          <aside className={styles.recapColumn}>
-            <div className={styles.gradientCard}>
-              <div className={styles.glassPanel}>
-                <Recap items={recapItems} />
+          {recapItems.length > 0 && (
+            <aside className={styles.recapColumn}>
+              <div className={styles.gradientCard}>
+                <div className={styles.glassPanel}>
+                  <Recap items={recapItems} />
+                </div>
               </div>
-            </div>
-          </aside>
+            </aside>
+          )}
         </div>
       </div>
     </main>
