@@ -13,23 +13,48 @@ export const Answers: CollectionConfig = {
       required: true,
     },
     {
-  name: 'question',
-  label: 'Question',
-  type: 'relationship',
-  relationTo: 'questions',
-  required: true,
-},
-{
-  name: 'nextQuestion',
-  label: 'Question suivante',
-  type: 'relationship',
-  relationTo: 'questions',
-},
-{
-  name: 'recommendation',
-  label: 'Recommandation',
-  type: 'relationship',
-  relationTo: 'recommendations',
-},
+      name: 'question',
+      label: 'Question',
+      type: 'relationship',
+      relationTo: 'questions',
+      required: true,
+    },
+    {
+      name: 'destinationType',
+      label: 'Destination',
+      type: 'radio',
+      required: true,
+      defaultValue: 'question',
+      options: [
+        {
+          label: 'Question suivante',
+          value: 'question',
+        },
+        {
+          label: 'Recommandation',
+          value: 'recommendation',
+        },
+      ],
+    },
+    {
+      name: 'nextQuestion',
+      label: 'Question suivante',
+      type: 'relationship',
+      relationTo: 'questions',
+      admin: {
+        condition: (_, siblingData) =>
+          siblingData?.destinationType === 'question',
+      },
+    },
+    {
+      name: 'recommendation',
+      label: 'Recommandation',
+      type: 'relationship',
+      relationTo: 'recommendations',
+      admin: {
+        condition: (_, siblingData) =>
+          siblingData?.destinationType === 'recommendation',
+      },
+    },
   ],
 }
