@@ -12,7 +12,6 @@ import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Questions } from './collections/Questions'
 import { Recommendations } from './collections/Recommendations'
-import { Results } from './collections/Results'
 import { Users } from './collections/Users'
 import { Answers } from './collections/Answers'
 import { Footer } from './Footer/config'
@@ -65,7 +64,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URL || '',
   }),
-  collections: [Answers, Recommendations, Results, Questions, Pages, Posts, Media, Categories, Users],
+  collections: [Answers, Recommendations, Questions, Pages, Posts, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins,
