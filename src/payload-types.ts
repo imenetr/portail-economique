@@ -127,6 +127,7 @@ export interface Config {
   };
   locale: null;
   widgets: {
+    'questionnaire-analytics': QuestionnaireAnalyticsWidget;
     collections: CollectionsWidget;
   };
   user: User;
@@ -1896,6 +1897,16 @@ export interface FooterSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "questionnaire-analytics_widget".
+ */
+export interface QuestionnaireAnalyticsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'medium' | 'large' | 'x-large' | 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
