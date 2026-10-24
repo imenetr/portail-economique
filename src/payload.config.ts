@@ -6,14 +6,15 @@ import { fileURLToPath } from 'url'
 
 import { defaultLexical } from '@/fields/defaultLexical'
 
+import { Answers } from './collections/Answers'
 import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
+import { QuestionnaireEvents } from './collections/QuestionnaireEvents'
 import { Questions } from './collections/Questions'
 import { Recommendations } from './collections/Recommendations'
 import { Users } from './collections/Users'
-import { Answers } from './collections/Answers'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
@@ -64,7 +65,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URL || '',
   }),
-  collections: [Answers, Recommendations, Questions, Pages, Posts, Media, Categories, Users],
+  collections: [Answers, Recommendations, QuestionnaireEvents, Questions, Pages, Posts, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins,
