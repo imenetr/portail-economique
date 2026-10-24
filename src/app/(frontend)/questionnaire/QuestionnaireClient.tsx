@@ -1,8 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { Question, Recommendation } from '@/payload-types'
+import {
+  type QuestionnaireEventType,
+  trackQuestionnaireEvent,
+} from '@/utilities/questionnaireAnalytics'
 
 import styles from './questionnaire.module.css'
 import { Recap } from './Recap'
@@ -14,6 +18,12 @@ type QuestionnaireClientProps = {
 type RecapItem = {
   question: string
   answer: string
+}
+
+type TrackEventData = {
+  question?: string
+  answer?: string
+  recommendation?: string
 }
 
 export function QuestionnaireClient({
@@ -28,10 +38,43 @@ export function QuestionnaireClient({
   const [history, setHistory] = useState<Question[]>([])
   const [recapItems, setRecapItems] = useState<RecapItem[]>([])
 
+  const [sessionId] = useState(() => crypto.randomUUID())
+  const sequenceRef = useRef(0)
+  const startTrackedRef = useRef(false)
+
+  const trackEvent = useCallback(
+    (eventType: QuestionnaireEventType, data: TrackEventData = {}) => {
+      sequenceRef.current += 1
+
+      trackQuestionnaireEvent({
+        sessionId,
+        eventType,
+        sequence: sequenceRef.current,
+        ...data,
+      })
+    },
+    [sessionId],
+  )
+
+  useEffect(() => {
+    if (startTrackedRef.current) return
+
+    startTrackedRef.current = true
+
+    trackEvent('start', {
+      question: firstQuestion.id,
+    })
+  }, [firstQuestion.id, trackEvent])
+
   const handleAnswer = (
     answer: NonNullable<Question['answers']>[number],
   ) => {
     if (typeof answer === 'string') return
+
+    trackEvent('answer', {
+      question: currentQuestion.id,
+      answer: answer.id,
+    })
 
     setRecapItems((previousItems) => [
       ...previousItems,
@@ -45,6 +88,12 @@ export function QuestionnaireClient({
       answer.recommendation &&
       typeof answer.recommendation === 'object'
     ) {
+      trackEvent('complete', {
+        question: currentQuestion.id,
+        answer: answer.id,
+        recommendation: answer.recommendation.id,
+      })
+
       setCurrentRecommendation(answer.recommendation)
       return
     }
@@ -64,6 +113,11 @@ export function QuestionnaireClient({
 
   const handleBack = () => {
     if (currentRecommendation) {
+      trackEvent('back', {
+        question: currentQuestion.id,
+        recommendation: currentRecommendation.id,
+      })
+
       setCurrentRecommendation(null)
       setRecapItems((previousItems) => previousItems.slice(0, -1))
       return
@@ -73,12 +127,21 @@ export function QuestionnaireClient({
 
     if (!previousQuestion) return
 
+    trackEvent('back', {
+      question: currentQuestion.id,
+    })
+
     setCurrentQuestion(previousQuestion)
     setHistory((previousHistory) => previousHistory.slice(0, -1))
     setRecapItems((previousItems) => previousItems.slice(0, -1))
   }
 
   const handleReset = () => {
+    trackEvent('reset', {
+      question: currentQuestion.id,
+      recommendation: currentRecommendation?.id,
+    })
+
     setCurrentQuestion(firstQuestion)
     setCurrentRecommendation(null)
     setHistory([])
