@@ -42,6 +42,12 @@ export default async function QuestionnaireAnalytics({
 
   const answerCounts = new Map<string, CountItem>()
   const recommendationCounts = new Map<string, CountItem>()
+  const pathCounts = new Map<string, CountItem>()
+
+  const sessionAnswers = new Map<
+    string,
+    Array<{ sequence: number; label: string }>
+  >()
 
   let totalAnswers = 0
 
@@ -59,12 +65,22 @@ export default async function QuestionnaireAnalytics({
 
       const label =
         getRelationLabel(event.answer, 'text') ?? 'Réponse inconnue'
+
       const existing = answerCounts.get(label)
 
       answerCounts.set(label, {
         label,
         count: (existing?.count ?? 0) + 1,
       })
+
+      const answers = sessionAnswers.get(event.sessionId) ?? []
+
+      answers.push({
+        sequence: event.sequence,
+        label,
+      })
+
+      sessionAnswers.set(event.sessionId, answers)
     }
 
     if (event.eventType === 'complete' && event.recommendation) {
@@ -79,6 +95,21 @@ export default async function QuestionnaireAnalytics({
         count: (existing?.count ?? 0) + 1,
       })
     }
+  }
+
+  for (const answers of sessionAnswers.values()) {
+    answers.sort((a, b) => a.sequence - b.sequence)
+
+    if (answers.length === 0) continue
+
+    const path = answers.map((answer) => answer.label).join(' → ')
+
+    const existing = pathCounts.get(path)
+
+    pathCounts.set(path, {
+      label: path,
+      count: (existing?.count ?? 0) + 1,
+    })
   }
 
   const sessionsStarted = startedSessions.size
@@ -104,13 +135,27 @@ export default async function QuestionnaireAnalytics({
     .sort((a, b) => b.count - a.count)
     .slice(0, 5)
 
+  const topPaths = Array.from(pathCounts.values())
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5)
+
   return (
-    <div className="card" style={{ height: '100%' }}>
+    <div
+      style={{
+        height: '100%',
+        padding: '1.5rem',
+        border: '1px solid var(--theme-elevation-150)',
+        borderRadius: '8px',
+        background: 'var(--theme-bg)',
+        boxSizing: 'border-box',
+      }}
+    >
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
+          alignItems: 'flex-start',
+          gap: '1rem',
           marginBottom: '1.5rem',
         }}
       >
@@ -209,6 +254,25 @@ export default async function QuestionnaireAnalytics({
           )}
         </section>
       </div>
+
+      <section style={{ marginTop: '2rem' }}>
+        <h4>Parcours les plus fréquents</h4>
+
+        {topPaths.length === 0 ? (
+          <p style={{ color: 'var(--theme-elevation-500)' }}>
+            Aucun parcours enregistré.
+          </p>
+        ) : (
+          <ol style={{ margin: 0, paddingLeft: '1.5rem' }}>
+            {topPaths.map((item) => (
+              <li key={item.label} style={{ marginBottom: '0.75rem' }}>
+                <span>{item.label}</span>{' '}
+                <strong>({item.count} session(s))</strong>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
 
       <div
         style={{
