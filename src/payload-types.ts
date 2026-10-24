@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     answers: Answer;
     recommendations: Recommendation;
+    'questionnaire-events': QuestionnaireEvent;
     questions: Question;
     pages: Page;
     posts: Post;
@@ -94,6 +95,7 @@ export interface Config {
   collectionsSelect: {
     answers: AnswersSelect<false> | AnswersSelect<true>;
     recommendations: RecommendationsSelect<false> | RecommendationsSelect<true>;
+    'questionnaire-events': QuestionnaireEventsSelect<false> | QuestionnaireEventsSelect<true>;
     questions: QuestionsSelect<false> | QuestionsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
@@ -319,6 +321,21 @@ export interface FolderInterface {
     totalDocs?: number;
   };
   folderType?: 'media'[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "questionnaire-events".
+ */
+export interface QuestionnaireEvent {
+  id: string;
+  sessionId: string;
+  eventType: 'start' | 'answer' | 'back' | 'reset' | 'complete';
+  question?: (string | null) | Question;
+  answer?: (string | null) | Answer;
+  recommendation?: (string | null) | Recommendation;
+  sequence: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -1042,6 +1059,10 @@ export interface PayloadLockedDocument {
         value: string | Recommendation;
       } | null)
     | ({
+        relationTo: 'questionnaire-events';
+        value: string | QuestionnaireEvent;
+      } | null)
+    | ({
         relationTo: 'questions';
         value: string | Question;
       } | null)
@@ -1156,6 +1177,20 @@ export interface RecommendationsSelect<T extends boolean = true> {
         logo?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "questionnaire-events_select".
+ */
+export interface QuestionnaireEventsSelect<T extends boolean = true> {
+  sessionId?: T;
+  eventType?: T;
+  question?: T;
+  answer?: T;
+  recommendation?: T;
+  sequence?: T;
   updatedAt?: T;
   createdAt?: T;
 }
