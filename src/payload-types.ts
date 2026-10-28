@@ -170,7 +170,7 @@ export interface Answer {
   question: string | Question;
   destinationType: 'question' | 'recommendation';
   nextQuestion?: (string | null) | Question;
-  recommendation?: (string | null) | Recommendation;
+  recommendation?: (string | Recommendation)[] | null;
   updatedAt: string;
   createdAt: string;
 }

@@ -24,6 +24,92 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  endpoints: [
+    {
+      path: '/powerbi/questionnaire-events',
+      method: 'get',
+      handler: async (req) => {
+        const hostname = new URL(req.url).hostname
+
+        if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+          return Response.json(
+            { error: 'This endpoint is available locally only.' },
+            { status: 403 },
+          )
+        }
+
+        const result = await req.payload.find({
+          collection: 'questionnaire-events',
+          depth: 1,
+          limit: 10000,
+          pagination: false,
+          sort: 'createdAt',
+          overrideAccess: true,
+        })
+
+        const docs = result.docs.map((event) => {
+          const question =
+            typeof event.question === 'object' && event.question
+              ? event.question
+              : null
+
+          const answer =
+            typeof event.answer === 'object' && event.answer
+              ? event.answer
+              : null
+
+          const recommendation =
+            typeof event.recommendation === 'object' &&
+            event.recommendation
+              ? event.recommendation
+              : null
+
+          return {
+            id: event.id,
+            sessionId: event.sessionId,
+            eventType: event.eventType,
+            sequence: event.sequence,
+            createdAt: event.createdAt,
+
+            questionId:
+              typeof event.question === 'string'
+                ? event.question
+                : question?.id ?? null,
+
+            question:
+              question && 'title' in question
+                ? question.title
+                : null,
+
+            answerId:
+              typeof event.answer === 'string'
+                ? event.answer
+                : answer?.id ?? null,
+
+            answer:
+              answer && 'text' in answer
+                ? answer.text
+                : null,
+
+            recommendationId:
+              typeof event.recommendation === 'string'
+                ? event.recommendation
+                : recommendation?.id ?? null,
+
+            recommendation:
+              recommendation && 'title' in recommendation
+                ? recommendation.title
+                : null,
+          }
+        })
+
+        return Response.json({
+          docs,
+          totalDocs: docs.length,
+        })
+      },
+    },
+  ],
   admin: {
   components: {
     beforeLogin: ['@/components/BeforeLogin'],

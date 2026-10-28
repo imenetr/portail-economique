@@ -51,6 +51,7 @@ export const Answers: CollectionConfig = {
       label: 'Recommandation',
       type: 'relationship',
       relationTo: 'recommendations',
+      hasMany: true,
       admin: {
         condition: (_, siblingData) =>
           siblingData?.destinationType === 'recommendation',
